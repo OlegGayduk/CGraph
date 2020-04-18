@@ -32,8 +32,6 @@ void nodes_traverse(TGraph* g, TFunc f);
 
 int gr_add_edge(TGraph* g, TNode* from, TNode* to);
 
-int gr_find_edge(TGraph* g, TNode* from, TNode* to);
-
 int gr_remove_edge(TGraph* g, TNode* from, TNode* to);
 
 void edges_traverse(TGraph* g, TFunc f);
