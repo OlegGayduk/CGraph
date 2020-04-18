@@ -57,6 +57,7 @@ int gr_add_node(TGraph* g, TNode* n) {
 }
 
 TNode *gr_find_node(TGraph* g, TNode* val) {
+
 	for (int i = 0; i < g->node_count; i++) {
 		if (g->nodes[i] == val) return &g->nodes[i];
 	}
@@ -69,52 +70,37 @@ int gr_remove_node(TGraph* g, TNode* n) {
 	if (gr_find_node(g, n) != NULL) {
 
 		int i = 0;
-		int old_count;
-		TNode** old_nodes;
+		TNode** nodes = g->nodes;
 
-		old_count = g->node_count;
-		old_nodes = g->nodes;
+		free(n);
 
-		g->nodes = (TNode*)malloc(sizeof(TNode) * old_count - 1);
-
-		if (g->nodes != NULL) {
-
-			TNode** nodes = g->nodes;
-
-			for (; i < old_count; i++) {
-				if (old_nodes[i] == n) {
-					for (; i < old_count; i++) {
-						nodes[i] = old_nodes[i + 1];
-					}
-
-					break;
+		for (; i < g->node_count; i++) {
+			if (nodes[i] == n) {
+				for (; i < g->node_count; i++) {
+					nodes[i] = nodes[i + 1];
 				}
-				else {
-					nodes[i] = old_nodes[i];
+
+				break;
+			}
+		}
+
+		g->node_count--;
+
+		if (g->edges != 0) {
+			for (i = 0; i < g->edge_count; i++) {
+				if (g->edges[i].from == n) {
+					gr_remove_edge(g, n, g->edges[i].to);
+					i--;
+				}
+				else if (g->edges[i].to == n) {
+					gr_remove_edge(g, g->edges[i].from, n);
+					i--;
 				}
 			}
-
-			g->node_count--;
-
-			if (g->edge_count != 0) {
-				for (i = 0; i < g->edge_count; i++) {
-					if (g->edges[i].from == n) {
-						gr_remove_edge(g, n, g->edges[i].to);
-						i--;
-					}
-					else if (g->edges[i].to == n) {
-						gr_remove_edge(g, g->edges[i].from, n);
-						i--;
-					}
-				}
-			}
-
-			return 1;
-
 		}
-		else {
-			return 0;
-		}
+
+		return 1;
+
 	}
 	else {
 		return 0;
@@ -122,6 +108,7 @@ int gr_remove_node(TGraph* g, TNode* n) {
 }
 
 void nodes_traverse(TGraph* g, TFunc f) {
+
 	for (int i = 0; i < g->node_count; i++) {
 		f("%d\n", g->nodes[i]->val);
 	}
@@ -129,7 +116,7 @@ void nodes_traverse(TGraph* g, TFunc f) {
 
 int gr_add_edge(TGraph* g, TNode* from, TNode* to) {
 
-	if (gr_find_edge(g, from, to) == 1) {
+	if (gr_find_node(g, from) != NULL && gr_find_node(g, to) != NULL) {
 
 		int old_count = g->edge_count;
 		TEdge *old_edges = g->edges;
@@ -155,33 +142,6 @@ int gr_add_edge(TGraph* g, TNode* from, TNode* to) {
 
 			return 0;
 		}
-	}
-	else {
-		return 0;
-	}
-}
-
-int gr_find_edge(TGraph* g, TNode* from, TNode* to) {
-
-	int i = 0;
-	int res = 0;
-
-	for (; i < g->node_count; i++) {
-		if (g->nodes[i] == from) {
-			res++;
-			break;
-		}
-	}
-
-	for (i = 0; i < g->node_count; i++) {
-		if (g->nodes[i] == to) {
-			res++;
-			break;
-		}
-	}
-
-	if (res == 2) {
-		return 1;
 	}
 	else {
 		return 0;
