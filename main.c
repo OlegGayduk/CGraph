@@ -34,6 +34,8 @@ int main(int argc, char** argv) {
 	res = gr_add_edge(graph, node, node3);
 
 	gr_remove_node(graph, node);
+	gr_remove_node(graph, node2);
+	gr_remove_node(graph, node3);
 
 	edges_traverse(graph, print);
 
