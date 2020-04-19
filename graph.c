@@ -34,7 +34,7 @@ TNode *gr_create_node(int val) {
 int gr_add_node(TGraph* g, TNode* n) {
 
 	int old_count;
-	int old_nodes;
+	TNode** old_nodes;
 
 	old_count = g->node_count;
 	old_nodes = g->nodes;
